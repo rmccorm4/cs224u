@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
+# %%
 
 # # Homework and bake-off: Word similarity
 
-# In[1]:
+# %%
 
 
 __author__ = "Christopher Potts"
@@ -54,7 +55,7 @@ __version__ = "CS224u, Stanford, Spring 2020"
 
 # ## Set-up
 
-# In[2]:
+# %%
 
 
 from collections import defaultdict
@@ -68,7 +69,7 @@ import vsm
 from IPython.display import display
 
 
-# In[3]:
+# %%
 
 
 VSM_HOME = os.path.join('data', 'vsmdata')
@@ -78,7 +79,7 @@ WORDSIM_HOME = os.path.join('data', 'wordsim')
 
 # ## Dataset readers
 
-# In[4]:
+# %%
 
 
 def wordsim_dataset_reader(
@@ -160,7 +161,7 @@ def men_reader():
 
 # This collection of readers will be useful for flexible evaluations:
 
-# In[5]:
+# %%
 
 
 READERS = (wordsim353_reader, mturk771_reader, simverb3500dev_reader, 
@@ -171,7 +172,7 @@ READERS = (wordsim353_reader, mturk771_reader, simverb3500dev_reader,
 # 
 # This section does some basic analysis of the datasets. The goal is to obtain a deeper understanding of what problem we're solving – what strengths and weaknesses the datasets have and how they relate to each other. For a full-fledged project, we would want to continue work like this and report on it in the paper, to provide context for the results.
 
-# In[6]:
+# %%
 
 
 def get_reader_name(reader):
@@ -185,7 +186,7 @@ def get_reader_name(reader):
 # 
 # How many vocabulary items are shared across the datasets?
 
-# In[7]:
+# %%
 
 
 def get_reader_vocab(reader):
@@ -197,7 +198,7 @@ def get_reader_vocab(reader):
     return vocab
 
 
-# In[8]:
+# %%
 
 
 def get_reader_vocab_overlap(readers=READERS):
@@ -219,13 +220,13 @@ def get_reader_vocab_overlap(readers=READERS):
     return pd.DataFrame(data)
 
 
-# In[9]:
+# %%
 
 
 vocab_overlap = get_reader_vocab_overlap()
 
 
-# In[10]:
+# %%
 
 
 def vocab_overlap_crosstab(vocab_overlap):
@@ -245,7 +246,7 @@ def vocab_overlap_crosstab(vocab_overlap):
     return xtab        
 
 
-# In[11]:
+# %%
 
 
 vocab_overlap_crosstab(vocab_overlap)
@@ -257,7 +258,7 @@ vocab_overlap_crosstab(vocab_overlap)
 # 
 # How many word pairs are shared across datasets and, for shared pairs, what is the correlation between their scores? That is, do the datasets agree?
 
-# In[12]:
+# %%
 
 
 def get_reader_pairs(reader):
@@ -267,7 +268,7 @@ def get_reader_pairs(reader):
     return {tuple(sorted([w1, w2])): score for w1, w2, score in reader()}
 
 
-# In[13]:
+# %%
 
 
 def get_reader_pair_overlap(readers=READERS):
@@ -303,7 +304,7 @@ def get_reader_pair_overlap(readers=READERS):
     return df[::2].reset_index(drop=True)
 
 
-# In[14]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -316,7 +317,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # This section builds up the evaluation code that you'll use for the homework and bake-off. For illustrations, I'll read in a VSM created from `data/vsmdata/giga_window5-scaled.csv.gz`:
 
-# In[15]:
+# %%
 
 
 giga5 = pd.read_csv(
@@ -325,7 +326,7 @@ giga5 = pd.read_csv(
 
 # ### Dataset evaluation
 
-# In[16]:
+# %%
 
 
 def word_similarity_evaluation(reader, df, distfunc=vsm.cosine):
@@ -375,19 +376,19 @@ def word_similarity_evaluation(reader, df, distfunc=vsm.cosine):
     return rho, data
 
 
-# In[17]:
+# %%
 
 
 rho, eval_df = word_similarity_evaluation(men_reader, giga5)
 
 
-# In[18]:
+# %%
 
 
 rho
 
 
-# In[19]:
+# %%
 
 
 eval_df.head()
@@ -397,7 +398,7 @@ eval_df.head()
 # 
 # For error analysis, we can look at the words with the largest delta between the gold score and the distance value in our VSM. We do these comparisons based on ranks, just as with our primary metric (Spearman $\rho$), and we normalize both rankings so that they have a comparable number of levels.
 
-# In[21]:
+# %%
 
 
 def word_similarity_error_analysis(eval_df):    
@@ -414,7 +415,7 @@ def _normalized_ranking(series):
 
 # Best predictions:
 
-# In[22]:
+# %%
 
 
 word_similarity_error_analysis(eval_df).head()
@@ -422,7 +423,7 @@ word_similarity_error_analysis(eval_df).head()
 
 # Worst predictions:
 
-# In[23]:
+# %%
 
 
 word_similarity_error_analysis(eval_df).tail()
@@ -432,7 +433,7 @@ word_similarity_error_analysis(eval_df).tail()
 
 # A full evaluation is just a loop over all the readers on which one want to evaluate, with a macro-average at the end:
 
-# In[24]:
+# %%
 
 
 def full_word_similarity_evaluation(df, readers=READERS, distfunc=vsm.cosine):
@@ -463,7 +464,7 @@ def full_word_similarity_evaluation(df, readers=READERS, distfunc=vsm.cosine):
     return series
 
 
-# In[25]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -488,7 +489,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # The function `test_run_giga_ppmi_baseline` can be used to test that you've implemented this specification correctly.
 
-# In[26]:
+# %%
 
 
 def run_giga_ppmi_baseline():
@@ -500,7 +501,7 @@ def run_giga_ppmi_baseline():
     return results
 
 
-# In[27]:
+# %%
 
 
 def test_run_giga_ppmi_baseline(run_giga_ppmi_baseline):
@@ -510,7 +511,7 @@ def test_run_giga_ppmi_baseline(run_giga_ppmi_baseline):
     assert ws_result == ws_expected,         "Expected wordsim353 value of {}; got {}".format(ws_expected, ws_result)
 
 
-# In[28]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -530,7 +531,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # The  function `test_run_ppmi_lsa_pipeline` will test your function on the count matrix in `data/vsmdata/giga_window20-flat.csv.gz`.
 
-# In[29]:
+# %%
 
 
 def run_ppmi_lsa_pipeline(count_df, k):
@@ -543,7 +544,7 @@ def run_ppmi_lsa_pipeline(count_df, k):
     return results
 
 
-# In[30]:
+# %%
 
 
 def test_run_ppmi_lsa_pipeline(run_ppmi_lsa_pipeline):
@@ -555,7 +556,7 @@ def test_run_ppmi_lsa_pipeline(run_ppmi_lsa_pipeline):
     assert men_result == men_expected,        "Expected men value of {}; got {}".format(men_expected, men_result)
 
 
-# In[31]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -582,14 +583,14 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # Performance will vary a lot for this function, so there is some uncertainty in the testing, but `test_run_small_glove_evals` will at least check that you wrote a function with the right general logic.
 
-# In[32]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
     get_ipython().system('pip install mittens')
 
 
-# In[33]:
+# %%
 
 
 def run_small_glove_evals(iters=[10, 100, 200]):
@@ -610,7 +611,7 @@ def run_small_glove_evals(iters=[10, 100, 200]):
     return results
 
 
-# In[34]:
+# %%
 
 
 def test_run_small_glove_evals(run_small_glove_evals):
@@ -620,7 +621,7 @@ def test_run_small_glove_evals(run_small_glove_evals):
         assert isinstance(data[max_iter], float)
 
 
-# In[35]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -641,7 +642,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 #  
 # You can use `test_dice_implementation` below to check that your implementation is correct.
 
-# In[36]:
+# %%
 
 
 def test_dice_implementation(func):
@@ -655,7 +656,7 @@ def test_dice_implementation(func):
     assert func(X[1], X[2]).round(5) == 0.67568
 
 
-# In[37]:
+# %%
 
 
 def dice(u, v):
@@ -665,7 +666,7 @@ def dice(u, v):
     return 1 - numerator/denominator
 
 
-# In[38]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -689,7 +690,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # For this problem, implement this reweighting scheme. You can use `test_ttest_implementation` below to check that your implementation is correct. You do not need to use this for any evaluations, though we hope you will be curious enough to do so!
 
-# In[39]:
+# %%
 
 
 def test_ttest_implementation(func):
@@ -710,7 +711,7 @@ def test_ttest_implementation(func):
     assert np.array_equal(predicted.round(5), actual)
 
 
-# In[40]:
+# %%
 
 
 def ttest(df):
@@ -733,7 +734,7 @@ def ttest(df):
     return (P_x_i_j - product) / np.sqrt(product)
 
 
-# In[41]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -748,7 +749,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # You don't need to write a lot of code; the motivation for this question is that the function you write could have practical value.
 
-# In[42]:
+# %%
 
 
 def subword_enrichment(df, n=4):
@@ -794,7 +795,7 @@ def subword_enrichment(df, n=4):
     return ret_df
 
 
-# In[43]:
+# %%
 
 
 def test_subword_enrichment(func):
@@ -818,7 +819,7 @@ def test_subword_enrichment(func):
     assert np.array_equal(expected.values, new_df.values),         "Co-occurrence values aren't the same"    
 
 
-# In[44]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -839,7 +840,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 
 # ### PPMI
 
-# In[48]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -851,7 +852,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 
 # ### PPMI + LSA
 
-# In[51]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -862,7 +863,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
         display(full_word_similarity_evaluation(giga20_ppmi_lsa))
 
 
-# In[60]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -873,7 +874,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
         display(full_word_similarity_evaluation(giga20_ppmi_lsa))
 
 
-# In[70]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -883,7 +884,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 
 # ### L2 Norm
 
-# In[53]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -893,14 +894,14 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 
 # ### Autoencoder
 
-# In[56]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
     get_ipython().system('pip install torch')
 
 
-# In[69]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -921,7 +922,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
             display(full_word_similarity_evaluation(giga20_ppmi_ae))
 
 
-# In[71]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -934,7 +935,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
             display(full_word_similarity_evaluation(giga20_ppmi_ae))
 
 
-# In[73]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -948,7 +949,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
                 display(full_word_similarity_evaluation(giga20_ppmi_ae))
 
 
-# In[72]:
+# %%
 
 
 if 'IS_GRADESCOPE_ENV' not in os.environ:
@@ -961,7 +962,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
             display(full_word_similarity_evaluation(giga20_ppmi_ae))
 
 
-# In[74]:
+# %%
 
 
 # Enter your system description in this cell.
@@ -1017,7 +1018,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 # 
 # The announcement will include the details on where to submit your entry.
 
-# In[ ]:
+# %%
 
 
 # Enter your bake-off assessment code into this cell. 
@@ -1030,7 +1031,7 @@ if 'IS_GRADESCOPE_ENV' not in os.environ:
 
 
 
-# In[ ]:
+# %%
 
 
 # On an otherwise blank line in this cell, please enter
